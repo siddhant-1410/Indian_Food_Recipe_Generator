@@ -107,7 +107,8 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 - Google Gemini API
 - FAISS (Facebook AI Similarity Search)
 - Flask
-- OpenCV / Pillow
+- OpenCV
+- LangChain
 
 ---
 
@@ -121,11 +122,3 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 | Recommender | Top-5 Precision | ~85% |
 
 ---
-
-## 🖥️ How to Run Locally
-
-1️⃣ Clone the repository
-
-```bash
-git clone https://github.com/your-username/indian-food-recipe-generator.git
-cd indian-food-recipe-generator
