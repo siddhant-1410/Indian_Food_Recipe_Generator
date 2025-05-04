@@ -2,6 +2,12 @@
 
 A deep learning-powered application that generates **Indian food recipes** from food images — with English to Hindi translation and top-5 dish recommendations.
 
+## Demo Video -
+
+
+https://github.com/user-attachments/assets/dfc6a854-b182-45ee-9e40-d7f8566d0d38
+
+
 ## 🚀 Project Overview
 
 This project aims to simplify recipe generation for Indian cuisine enthusiasts by allowing users to upload a food image and receive:
