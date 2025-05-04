@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Dish Classification Result</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="{{ url_for('uploaded_file', filename=image_filename) }}" class="img-fluid rounded" alt="{{ dish_name }}">
+                    </div>
+                    <div class="col-md-8">
+                        <h4>Identified Dish: <span class="text-primary">{{ dish_name }}</span></h4>
+                        <p>Confidence: <span class="badge bg-success">{{ confidence }}%</span></p>
+                        
+                        <div class="mt-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form action="{{ url_for('get_recipe') }}" method="post">
+                                        <input type="hidden" name="dish_name" value="{{ dish_name }}">
+                                        <div class="mb-3">
+                                            <label for="dish_name_edit" class="form-label">Edit dish name if needed:</label>
+                                            <input type="text" class="form-control" id="dish_name_edit" name="dish_name" value="{{ dish_name }}">
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary btn-lg">Generate Recipe</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form action="{{ url_for('recommend_dishes') }}" method="post">
+                                        <input type="hidden" name="dish_name" value="{{ dish_name }}">
+                                        <input type="hidden" name="image_filename" value="{{ image_filename }}">
+                                        <div class="mb-3">
+                                            <label for="n_recommendations" class="form-label">Number of recommendations:</label>
+                                            <select class="form-control" id="n_recommendations" name="n_recommendations">
+                                                <option value="3">3</option>
+                                                <option value="5" selected>5</option>
+                                                <option value="8">8</option>
+                                            </select>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-info btn-lg text-white">Recommend Similar Dishes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Try Another Image</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

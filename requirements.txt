@@ -1,0 +1,15 @@
+torch==2.1.0
+Flask==2.3.3
+Werkzeug==2.3.7
+tensorflow==2.18.0
+opencv-python==4.8.1.78
+numpy==1.26.4
+pdfplumber==0.10.3
+faiss-cpu==1.7.4
+sentence-transformers==2.5.1
+tqdm==4.67.1
+langchain==0.1.4
+google-generativeai==0.3.2
+python-dotenv==1.0.0
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.23.0

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Indian Dish Classifier</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">Take a photo of an Indian dish and our AI will identify it and generate a recipe!</p>
+                
+                <form action="{{ url_for('classify_dish') }}" method="post" enctype="multipart/form-data" class="mt-4">
+                    <div class="mb-4">
+                        <label for="image" class="form-label">Upload a food image</label>
+                        <input class="form-control" type="file" id="image" name="image" accept=".jpg,.jpeg,.png" required>
+                        <div class="form-text">Supported formats: JPG, JPEG, PNG</div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Identify Dish</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">How It Works</h3>
+            </div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered">
+                    <li class="list-group-item">Upload a clear image of an Indian dish</li>
+                    <li class="list-group-item">Our AI model will classify the dish</li>
+                    <li class="list-group-item">Generate a detailed recipe with ingredients and instructions</li>
+                    <li class="list-group-item">Enjoy cooking your favorite Indian dishes!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

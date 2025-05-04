@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Recipe for {{ dish_name }}</h3>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="recipeTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="english-tab" data-bs-toggle="tab" data-bs-target="#english" type="button" role="tab" aria-controls="english" aria-selected="true">English</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="hindi-tab" data-bs-toggle="tab" data-bs-target="#hindi" type="button" role="tab" aria-controls="hindi" aria-selected="false">Hindi</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="recipeTabsContent">
+                    <div class="tab-pane fade show active" id="english" role="tabpanel" aria-labelledby="english-tab">
+                        <div class="recipe-content">
+                            {% set recipe_lines = recipe.split('\n') %}
+                            
+                            {% for line in recipe_lines %}
+                                {% if "**" in line or line.startswith('#') %}
+                                    {# Handle headings and bolded text #}
+                                    {% if line.startswith('##') %}
+                                        <h2>{{ line.replace('##', '').strip() }}</h2>
+                                    {% elif line.startswith('#') %}
+                                        <h1>{{ line.replace('#', '').strip() }}</h1>
+                                    {% elif "**" in line %}
+                                        <p class="fw-bold">{{ line.replace('**', '').strip() }}</p>
+                                    {% else %}
+                                        <p>{{ line }}</p>
+                                    {% endif %}
+                                {% elif ":" in line and ("time" in line.lower() or "serving" in line.lower() or "difficulty" in line.lower()) %}
+                                    {# Handle recipe metadata like cooking time, etc. #}
+                                    <div class="recipe-meta-item">
+                                        {% set parts = line.split(':', 1) %}
+                                        <span class="recipe-meta-label">{{ parts[0].strip() }}:</span>
+                                        <span class="recipe-meta-value">{{ parts[1].strip() }}</span>
+                                    </div>
+                                {% elif line.strip().startswith('-') or line.strip().startswith('*') %}
+                                    {# Handle list items #}
+                                    {% if not loop.previtem or not loop.previtem.strip().startswith('-') and not loop.previtem.strip().startswith('*') %}
+                                        <ul class="ingredient-list">
+                                    {% endif %}
+                                    <li>{{ line.replace('-', '', 1).replace('*', '', 1).strip() }}</li>
+                                    {% if not loop.nextitem or not loop.nextitem.strip().startswith('-') and not loop.nextitem.strip().startswith('*') %}
+                                        </ul>
+                                    {% endif %}
+                                {% elif line.strip().startswith(('1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.', '9.', '10.')) %}
+                                    {# Handle numbered steps #}
+                                    {% if not loop.previtem or not loop.previtem.strip()[0].isdigit() %}
+                                        <ol class="instruction-list">
+                                    {% endif %}
+                                    <li>{{ line.split('.', 1)[1].strip() }}</li>
+                                    {% if not loop.nextitem or not loop.nextitem.strip()[0].isdigit() %}
+                                        </ol>
+                                    {% endif %}
+                                {% else %}
+                                    {# Regular paragraphs #}
+                                    {% if line.strip() %}
+                                        <p>{{ line }}</p>
+                                    {% else %}
+                                        <br>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="hindi" role="tabpanel" aria-labelledby="hindi-tab">
+                        <div class="recipe-content" id="translated-content">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-3">Translating recipe to Hindi...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Try Another Dish</a>
+                    <button onclick="window.print()" class="btn btn-success">Print Recipe</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Store the original recipe content for translation
+    const originalRecipe = `{{ recipe|safe }}`;
+    
+    // Initialize translated content as not fetched yet
+    let translatedContentFetched = false;
+    
+    // Add event listener to the Hindi tab
+    document.getElementById('hindi-tab').addEventListener('click', function() {
+        if (!translatedContentFetched) {
+            translateRecipe(originalRecipe);
+        }
+    });
+    
+    function translateRecipe(recipeText) {
+        // Set up the fetch request to the translation endpoint
+        fetch('{{ url_for("translate_recipe") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'recipe': recipeText
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle successful translation
+            if (data.translated_recipe) {
+                // Format the translated content similar to the English version
+                const translatedContent = formatTranslatedRecipe(data.translated_recipe);
+                document.getElementById('translated-content').innerHTML = translatedContent;
+                translatedContentFetched = true;
+            } else {
+                throw new Error('No translation received');
+            }
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('Translation error:', error);
+            document.getElementById('translated-content').innerHTML = `
+                <div class="alert alert-danger">
+                    <p>Sorry, we encountered an error translating the recipe.</p>
+                    <p>Error: ${error.message}</p>
+                </div>
+            `;
+        });
+    }
+    
+    function formatTranslatedRecipe(translatedText) {
+        // Split the translated text into lines
+        const lines = translatedText.split('\n');
+        let formattedHtml = '';
+        
+        // Process each line similar to the Jinja template
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const prevLine = i > 0 ? lines[i-1] : '';
+            const nextLine = i < lines.length - 1 ? lines[i+1] : '';
+            
+            // Check if it's a heading or bold text
+            if (line.includes('**') || line.startsWith('#')) {
+                if (line.startsWith('##')) {
+                    formattedHtml += `<h2>${line.replace('##', '').trim()}</h2>`;
+                } else if (line.startsWith('#')) {
+                    formattedHtml += `<h1>${line.replace('#', '').trim()}</h1>`;
+                } else if (line.includes('**')) {
+                    formattedHtml += `<p class="fw-bold">${line.replace(/\*\*/g, '').trim()}</p>`;
+                } else {
+                    formattedHtml += `<p>${line}</p>`;
+                }
+            } 
+            // Check if it's a metadata line
+            else if (line.includes(':') && 
+                    (line.toLowerCase().includes('time') || 
+                     line.toLowerCase().includes('serving') || 
+                     line.toLowerCase().includes('difficulty'))) {
+                const parts = line.split(':', 2);
+                formattedHtml += `
+                    <div class="recipe-meta-item">
+                        <span class="recipe-meta-label">${parts[0].trim()}:</span>
+                        <span class="recipe-meta-value">${parts[1].trim()}</span>
+                    </div>
+                `;
+            }
+            // Check if it's a list item
+            else if (line.trim().startsWith('-') || line.trim().startsWith('*')) {
+                const prevIsNotList = !prevLine.trim().startsWith('-') && !prevLine.trim().startsWith('*');
+                const nextIsNotList = !nextLine.trim().startsWith('-') && !nextLine.trim().startsWith('*');
+                
+                if (prevIsNotList) {
+                    formattedHtml += '<ul class="ingredient-list">';
+                }
+                
+                formattedHtml += `<li>${line.replace(/^[-*]/, '').trim()}</li>`;
+                
+                if (nextIsNotList) {
+                    formattedHtml += '</ul>';
+                }
+            }
+            // Check if it's a numbered step
+            else if (/^\d+\./.test(line.trim())) {
+                const prevIsNotNumbered = !prevLine.trim().match(/^\d+\./);
+                const nextIsNotNumbered = !nextLine.trim().match(/^\d+\./);
+                
+                if (prevIsNotNumbered) {
+                    formattedHtml += '<ol class="instruction-list">';
+                }
+                
+                const stepContent = line.replace(/^\d+\./, '').trim();
+                formattedHtml += `<li>${stepContent}</li>`;
+                
+                if (nextIsNotNumbered) {
+                    formattedHtml += '</ol>';
+                }
+            }
+            // Regular paragraph
+            else {
+                if (line.trim()) {
+                    formattedHtml += `<p>${line}</p>`;
+                } else {
+                    formattedHtml += '<br>';
+                }
+            }
+        }
+        
+        return formattedHtml;
+    }
+</script>
+{% endblock %}

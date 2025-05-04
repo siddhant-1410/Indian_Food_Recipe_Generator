@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0">Similar Dishes to {{ dish_name }}</h3>
+            </div>
+            <div class="card-body">
+                {% if image_filename %}
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <img src="{{ url_for('uploaded_file', filename=image_filename) }}" class="card-img-top" alt="{{ dish_name }}">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ dish_name }}</h5>
+                                <form action="{{ url_for('get_recipe') }}" method="post">
+                                    <input type="hidden" name="dish_name" value="{{ dish_name }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">Get Recipe</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h4>Similar Dishes You Might Like</h4>
+                        <p class="text-muted">Based on flavor profile, ingredients, and regional similarities</p>
+                    </div>
+                </div>
+                {% else %}
+                <h4 class="mb-3">Similar Dishes to {{ dish_name }}</h4>
+                <p class="text-muted mb-4">Based on flavor profile, ingredients, and regional similarities</p>
+                {% endif %}
+
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for dish in recommendations %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">{{ dish.name|title }}</h5>
+                                
+                                <div class="mb-3">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ dish.similarity_score * 100 }}%"
+                                             aria-valuenow="{{ dish.similarity_score * 100 }}" 
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            {{ (dish.similarity_score * 100)|round(1) }}%
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Similarity Score</small>
+                                </div>
+                                
+                                <p class="card-text">
+                                    <span class="badge bg-light text-dark">{{ dish.diet }}</span>
+                                    <span class="badge bg-light text-dark">{{ dish.course }}</span>
+                                    <span class="badge bg-light text-dark">{{ dish.flavor_profile }}</span>
+                                </p>
+                                
+                                <p class="card-text">
+                                    <small class="text-muted">Region: {{ dish.region }}</small><br>
+                                    <small class="text-muted">State: {{ dish.state }}</small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <form action="{{ url_for('get_recipe') }}" method="post">
+                                    <input type="hidden" name="dish_name" value="{{ dish.name }}">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-outline-primary">Get Recipe</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Try Another Dish</a>
+                    
+                    <form action="{{ url_for('recommend_dishes') }}" method="post" class="d-inline-block ms-2">
+                        <input type="hidden" name="dish_name" value="{{ dish_name }}">
+                        <input type="hidden" name="image_filename" value="{{ image_filename }}">
+                        <input type="hidden" name="n_recommendations" value="{{ recommendations|length + 3 }}">
+                        <button type="submit" class="btn btn-info text-white">Show More Similar Dishes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add some custom styles for this page -->
+<style>
+    .progress {
+        height: 10px;
+    }
+    
+    .card-title {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.5rem;
+    }
+    
+    .badge {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
