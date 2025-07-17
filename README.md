@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/7739b9d1-3df4-4ce3-ab21-6f5829ceb4a8
 
 ## 🚀 Project Overview
 
-This project aims to simplify recipe generation for Indian cuisine enthusiasts by allowing users to upload a food image and receive:
+This project aims to simplify recipe generation for Indian cuisine enthusiasts by allowing users to upload a food image and receive - 
 
 - The **generated recipe** in English
 - An **optional Hindi translation** of the recipe
