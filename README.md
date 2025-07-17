@@ -30,7 +30,7 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 - **Classes**: 25 Indian dishes  
 - **Images per class**: 250–300  
 - **Total images**: 6,850  
-- **Image resolution**: 224x224 px (resized for CNN)  
+- **Image resolution**: 128 x 128 px (resized for CNN)  
 - **Examples of classes**: Biryani, Dosa, Paneer Butter Masala, Chole Bhature, Idli, etc.
 
 | Metric | Value |
@@ -43,18 +43,15 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 ---
 
 ### 2️⃣ Recipe Dataset (For Retrieval & Generation)
-
-- **Recipes per class**: ~80–100  
-- **Total recipes**: ~2,300  
+ 
 - **Fields**: Dish Name, Ingredients, Preparation Steps  
-- **Storage format**: JSON  
+- **Storage format**: PDF + vector-database 
 - **Embedding method**: Sentence embeddings using Google Gemini API  
 - **Vector DB**: FAISS
 
 | Metric | Value |
 |--------|-------|
-| Recipes | ~2,300 |
-| Avg recipes/class | ~92 |
+| Recipes | 25 |
 | Fields | Name, Ingredients, Steps |
 | Vector Store | FAISS |
 
@@ -70,7 +67,7 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 |--------|-------|
 | Sentence pairs | 10,000 |
 | Format | JSONL |
-| BLEU Score (after fine-tuning) | **83.567** |
+| BLEU Score (after fine-tuning) | **56.7** |
 
 ---
 
@@ -89,7 +86,7 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 ### 🌐 Translation Model
 - **Base model**: Helsinki-NLP Opus-MT (English-Hindi)
 - **Fine-tuning**: 10 epochs on recipe dataset
-- **Final BLEU Score**: **83.567**
+- **Final BLEU Score**: **56.7**
 
 ### 🍛 Recommender System
 - **Method**: Cosine similarity on image embeddings
@@ -115,8 +112,8 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 | Component | Metric | Value |
 |-----------|--------|-------|
 | Image Classifier | Accuracy | **83.0%** |
-| Recipe Generator | Retrieval Accuracy | ~89% |
-| Translator | BLEU Score | **83.567** |
-| Recommender | Top-5 Precision | ~85% |
+| Recipe Generator | Retrieval Accuracy | Tested over 100+ test cases with accurate results |
+| Translator | BLEU Score | **56.7** |
+| Recommender | Top-5 Precision | Tested over 100+ test cases with accurate results |
 
 ---
