@@ -18,7 +18,7 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 
 - 🖼️ **Image Classification** of 25 popular Indian dishes
 - 📝 **Recipe Generation** using Retrieval-Augmented Generation (RAG)
-- 🌐 **Recipe Translation** from English to Hindi (BLEU score: 83.567)
+- 🌐 **Recipe Translation** from English to Hindi
 - 🍛 **Dish Recommendation System** (Top 5 similar dishes)
 - ⚙️ **Flask backend** for smooth integration
 
@@ -67,7 +67,6 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 |--------|-------|
 | Sentence pairs | 10,000 |
 | Format | JSONL |
-| BLEU Score (after fine-tuning) | **56.7** |
 
 ---
 
@@ -86,7 +85,6 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 ### 🌐 Translation Model
 - **Base model**: Helsinki-NLP Opus-MT (English-Hindi)
 - **Fine-tuning**: 10 epochs on recipe dataset
-- **Final BLEU Score**: **56.7**
 
 ### 🍛 Recommender System
 - **Method**: Cosine similarity on image embeddings
@@ -113,7 +111,6 @@ This project aims to simplify recipe generation for Indian cuisine enthusiasts b
 |-----------|--------|-------|
 | Image Classifier | Accuracy | **83.0%** |
 | Recipe Generator | Retrieval Accuracy | Tested over 100+ test cases with accurate results |
-| Translator | BLEU Score | **56.7** |
 | Recommender | Top-5 Precision | Tested over 100+ test cases with accurate results |
 
 ---
